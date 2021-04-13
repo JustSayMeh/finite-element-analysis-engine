@@ -117,6 +117,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Grid1DBiLinear.cpp" />
     <ClCompile Include="Grid1DQuad.cpp" />
     <ClCompile Include="Grid2DQuad.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -128,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="functions.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="Grid1DBiLinear.h" />
     <ClInclude Include="Grid1DQuad.h" />
     <ClInclude Include="Grid2DQuad.h" />
   </ItemGroup>

@@ -183,6 +183,7 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 		sum(Ar, res, p, N);
 		h2 = scal(r, r, N);
 		h = sqrt(scal(r, r, N)) / norm_v;
+		//printf("%lf\n", (sqrt(scal(r, r, N)) / norm_v));
 	}
 	printf("\n");
 	for (int i = 0; i < N; ++i)
@@ -220,4 +221,164 @@ double * Grid::LOS()
 	}*/
 	Iter(N, maxiter, e, r, p, x, z, ig, jg, diag, al, au, pr, Ar, res);
 	return x;
+}
+
+
+void mul_matrix_vector(double* x, double* rs, int* ia, int* ja, double* di, double* al, double* au, int N)
+{
+	int n = N, * il = ia, * jl = ja, * iu = ia, * ju = ja;
+	double* lells = al;
+	double* uells = au;
+	for (int i = 0; i < n; ++i)
+	{
+		double sum = 0;
+		int s = il[i];
+		int e = il[i + 1];
+		for (int j = s; j < e; ++j)
+			sum += x[jl[j]] * lells[j];
+		rs[i] = sum;
+	}
+	for (int i = 0; i < n; ++i)
+		rs[i] += x[i] * di[i];
+
+	for (int i = 0; i < n; ++i)
+	{
+		double sum = 0;
+		int s = iu[i];
+		int e = iu[i + 1];
+		int j = s;
+		for (; j < e; ++j)
+			rs[ju[j]] += x[i] * uells[j];
+	}
+
+}
+
+
+double *Grid::MSG()
+{
+	int n = nodes.size(), i;
+	double* r = new double[n];
+	double* z = new double[n];
+	double* p = new double[n];
+	double* Ar = new double[n];
+	double* x = new double[n];
+	double* f = new double[n];
+	double a, b;
+	double e = 1e-16;
+	int maxiter = 100000;
+	for (int i = 0; i < n; ++i)
+	{
+		f[i] = bf[i];
+		x[i] = 0;
+	}
+		
+	mul_matrix_vector(x, r, ig, jg, diag, al, au, n);
+	for (int i = 0; i < n; ++i)
+		z[i] = r[i] = f[i] - r[i];
+	mul_matrix_vector(z, p, ig, jg, diag, al, au, n);
+	double sqff = sqrt(scal(f, f, n));
+	double sqrr = sqrt(scal(r, r, n));
+	for (i = 0; i < maxiter && sqrr / sqff > e; ++i)
+	{
+		double pp = scal(p, p, n);
+		a = scal(p, r, n) / pp;
+		for (int i = 0; i < n; ++i)
+			x[i] = x[i] + a * z[i];
+		for (int i = 0; i < n; ++i)
+			r[i] = r[i] - a * p[i];
+		mul_matrix_vector(r, Ar, ig, jg, diag, al, au, n);
+		b = -scal(p, Ar, n) / pp;
+		for (int i = 0; i < n; ++i)
+			z[i] = r[i] + b * z[i];
+		for (int i = 0; i < n; ++i)
+			p[i] = Ar[i] + b * p[i];
+		sqrr = sqrt(scal(r, r, n));
+		printf("\r%d %.14lf", i, sqrr / sqff);
+	}
+	//delete r[];
+	//free(z);
+	//free(p);
+	//free(Ar);
+	printf("\n");
+	for (int i = 0; i < n; ++i)
+	{
+		printf("%.14lf;\n", x[i]);
+	}
+	return x;
+}
+
+void Grid::toLUsq()
+{
+	int n = nodes.size();
+	int* up = ig;
+	int* lw = ig;
+	double* aij = NULL;
+	for (int i = 0; i < n; ++i)
+	{
+		double sum;
+		int lj = lw[i + 1];
+		int ll = lj - lw[i];
+		int ls = i - lj + lw[i];
+		aij = al + lw[i + 1] - i + ls;
+		for (int j = ls; j < i; ++j, ++aij)
+		{
+			sum = aij[0];
+			int uj = up[j + 1];
+			int us = j - uj + up[j];
+			int k = us > ls ? us : ls;
+			for (int ui = uj - j + k, li = lj - i + k; ui < uj; ++ui, ++li)
+				sum -= au[ui] * al[li];
+			aij[0] = sum / diag[j];
+		}
+		int uj = up[i + 1];
+		int us = i - uj + up[i];
+		int ul = uj - up[i];
+		aij = au + up[i + 1] - i + us;
+		for (int j = us; j < i; ++j, ++aij)
+		{
+			sum = aij[0];
+			int lj = lw[j + 1];
+			int ls = j - lj + lw[j];
+			int k = us > ls ? us : ls;
+			for (int ui = uj - i + k, li = lj - j + k; li < lj; ++li, ++ui)
+				sum -= au[ui] * al[li];
+			aij[0] = sum / diag[j];
+		}
+		ll = (ul > ll) ? ll : ul;
+		sum = diag[i];
+		for (int li = lj - ll, ui = uj - ll; li < lj; ++li, ++ui)
+			sum -= al[li] * au[ui];
+		diag[i] = sqrt(sum);
+	}
+}
+
+double *Grid::calcX()
+{
+	int n = nodes.size();
+	int* up = ig;
+	int* lw = ig;
+	double* aij = NULL;
+	double* b = new double[n];
+	for (int i = 0; i < n; i++)
+		b[i] = bf[i];
+	for (int i = 0; i < n; ++i)
+	{
+		int lj = lw[i + 1];
+		int ll = i - lj + lw[i];
+		double sum = b[i];
+		for (int j = ll, li = lj - i + ll; j < i; ++j, ++li)
+			sum -= al[li] * b[j];
+		b[i] = sum / diag[i];
+	}
+	for (int i = n - 1; i >= 0; --i)
+	{
+		int uj = up[i + 1];
+		int ul = i - uj + up[i];
+		b[i] /= diag[i];
+		for (int j = ul, ui = uj - i + ul; j < i; ++j, ++ui)
+			b[j] -= au[ui] * b[i];
+
+
+	}
+	return b;
 }

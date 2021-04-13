@@ -1,11 +1,14 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <iostream>
 #include <fstream> 
 #include <cmath>
 #include "Grid2DQuad.h"
 #include "Grid1DQuad.h"
+#include "Grid1DBiLinear.h"
+#include <time.h>
 using namespace std;
-
+string root = "..\\1DTestDip5Quad\\";
 void print_full_matrix(Grid& stk) {
 	int n = stk.nodes.size();
 	double* mt = new double[n * n];
@@ -24,21 +27,25 @@ void print_full_matrix(Grid& stk) {
 		}
 		mt[i * n + i] = stk.diag[i];
 	}
-
+	FILE* matrix_f = fopen((root + "matrix.txt").c_str(), "w");
+	FILE* b_f = fopen((root + "b.txt").c_str(), "w");
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; ++j)
-			printf("%lf, ", mt[i * n + j]);
-		printf(";\n");
+			fprintf(matrix_f, "%lf, ", mt[i * n + j]);
+		fprintf(matrix_f, ";\n");
 	}
-
+	printf("--------------------------------\n");
 	for (int i = 0; i < n; ++i)
-		printf("%lf, ", stk.bf[i]);
+		fprintf(b_f, "%lf, ", stk.bf[i]);
+	fclose(b_f);
+	fclose(matrix_f);
 	delete mt;
 }
 double F(Node *n)
 {
-	return log(n->coords[0] * n->coords[0]) + log(n->coords[1]);
+	return -10*log(n->coords[0]) + 10 * log(100);
+	//return 2 * log(n->coords[0]) + log(n->coords[1]);
 }
 void print_solution(Grid stk)
 {
@@ -46,21 +53,32 @@ void print_solution(Grid stk)
 	for (int i = 0; i < stk.nodes.size(); i++)
 	{
 		//printf("%d %.16lf\n", i, F(stk.nodes[i]));
-		printf("%.16lf\n", F(stk.nodes[i]));
+		printf("%.16lf;\n", F(stk.nodes[i]));
+	}
+}
+
+void drob_grid(Grid stk) {
+	printf("%.16lf 1 0\n", stk.nodes[0]->coords[0]);
+	for (int i = 1; i < stk.nodes.size(); i+=1)
+	{
+		//printf("%d %.16lf\n", i, F(stk.nodes[i]));
+		
+		printf("%.16lf 1 0\n", (stk.nodes[i - 1]->coords[0] + stk.nodes[i]->coords[0]) / 2);
+		printf("%.16lf 1 0\n", stk.nodes[i]->coords[0]);
 	}
 }
 void main()
 {
 	int n, n2, n3;
 	string path;
-	Grid2DQuad stk;
+	Grid1DQuad stk;
 	
 
-	ifstream fuzly("..\\2DTest3\\nodes.txt");
-	ifstream felems("..\\2DTest3\\elems.txt");
-	ifstream fF("..\\2DTest3\\F.txt");
-	ifstream ffirstB("..\\2DTest3\\firstB.txt");
-	ifstream fsecondB("..\\2DTest3\\secondB.txt");
+	ifstream fuzly(root + "nodes.txt");
+	ifstream felems(root + "elems.txt");
+	ifstream fF(root + "F.txt");
+	ifstream ffirstB(root + "firstB.txt");
+	ifstream fsecondB(root + "secondB.txt");
 
 	fuzly >> n >> n2 >> n3;
 	for (int i = 0; i < n; ++i)
@@ -82,6 +100,7 @@ void main()
 		stk.addNode(coords, params);
 	}
 	print_solution(stk);
+	//drob_grid(stk);
 	felems >> n >> n2;
 	for (int i = 0; i < n; ++i)
 	{
@@ -134,11 +153,46 @@ void main()
 		}
 		stk.addSecond(points, tettas);
 	}
+	clock_t s = clock();
 	stk.generatePortrate();
 	stk.buildMatrix();
 	stk.secondBoundary();
+	
 	stk.firstBoundary();
 	print_full_matrix(stk);
-	double *x = stk.LOS();
+	//double *x = stk.MSG();
+	stk.toLUsq();
+
+	double* x = stk.calcX();
+	clock_t tt = clock() - s;
+	for (int i = 0; i < stk.nodes.size(); i++)
+		printf("%.16lf;\n", x[i]);
+	printf("-------------------------\nTime: %d;\n", tt);
+	ofstream fsolution(root + "log.txt");
+	fsolution << "Время: " << tt << "\n";
+	fsolution << "Численное решение\n";
+	fsolution.precision(12);
+	for (int i = 0; i < stk.nodes.size(); i++)
+	{
+		fsolution << std::scientific << "\t" <<x[i] << "\n";
+	}
+	fsolution << "Точное решение\n";
+	for (int i = 0; i < stk.nodes.size(); i++)
+	{
+		fsolution << std::scientific << "\t" << F(stk.nodes[i]) << "\n";
+	}
+	fsolution << "Относительная погрешность\n";
+	double acc = 0;
+	double normF = 0;
+	for (int i = 0; i < stk.nodes.size(); i++)
+	{
+		double Fl = F(stk.nodes[i]);
+		double diff = Fl - x[i];
+		acc += diff * diff;
+		normF += Fl * Fl;
+	}
+	acc = sqrt(acc) / sqrt(normF);
+	fsolution << "\t" << acc;
+	fsolution.close();
 	return;
 }

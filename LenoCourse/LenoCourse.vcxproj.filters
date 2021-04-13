@@ -35,6 +35,9 @@
     <ClCompile Include="Grid2DQuad.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Grid1DBiLinear.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="functions.h">
@@ -47,6 +50,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Grid2DQuad.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid1DBiLinear.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

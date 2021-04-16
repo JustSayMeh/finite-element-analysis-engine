@@ -20,12 +20,6 @@
     <ClCompile Include="Node.h">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="GridD.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="GridD.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -37,6 +31,12 @@
     </ClCompile>
     <ClCompile Include="Grid1DBiLinear.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid2DLinear.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid2DLinear.h">
+      <Filter>Файлы заголовков</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

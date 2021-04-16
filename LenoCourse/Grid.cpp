@@ -132,7 +132,7 @@ void multA(int* ia, int* ja, double* di, double* al, double* au, double* vec, do
 }
 double scal(double* p, double* r, int N)
 {
-	double sum = 0;
+	long double sum = 0;
 	for (int i = 0; i < N; i++)
 		sum += p[i] * r[i];
 	return sum;
@@ -167,10 +167,13 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 	}
 	double h = 0, h2 = 0;
 	multA(ia, ja, di, al, au, z, p, N);
+	printf("\n\n");
 	for (k = 0; k<maxiter && (sqrt(scal(r, r, N)) / norm_v)>e; k++)
 	{
 		norm = scal(p, p, N);
 		a = scal(p, r, N) / norm;
+		if (abs(a) < 1e-10)
+			a = 1e-2 * (a < 0)? -1 : 1;
 		koeff(z, a, res, N);
 		sum(x, res, x, N);
 		koeff(p, -a, res, N);
@@ -182,8 +185,20 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 		koeff(p, b, res, N);
 		sum(Ar, res, p, N);
 		h2 = scal(r, r, N);
+		/*if (h == sqrt(scal(r, r, N)) / norm_v)
+		{
+			multA(ia, ja, di, al, au, x, Ar, N);
+			koeff(Ar, -1, Ar, N);
+			sum(vec, Ar, r, N);
+			for (int i = 0; i < N; i++)
+			{
+				z[i] = r[i];
+			}
+			multA(ia, ja, di, al, au, z, p, N);
+		}*/
 		h = sqrt(scal(r, r, N)) / norm_v;
 		//printf("%lf\n", (sqrt(scal(r, r, N)) / norm_v));
+		printf("%d %.16lf\r", k, (sqrt(scal(r, r, N)) / norm_v));
 	}
 	printf("\n");
 	for (int i = 0; i < N; ++i)
@@ -196,7 +211,7 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 double * Grid::LOS()
 {
 	int N = nodes.size();
-	int maxiter = 100000;
+	int maxiter = 1000000;
 	double e = 1e-16;
 	double* pr = new double[N];
 	double* x = new double[N];

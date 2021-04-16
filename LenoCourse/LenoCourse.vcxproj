@@ -122,8 +122,8 @@
     <ClCompile Include="Grid2DQuad.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="functions.cpp" />
-    <ClCompile Include="GridD.cpp" />
-    <ClCompile Include="GridD.h" />
+    <ClCompile Include="Grid2DLinear.cpp" />
+    <ClCompile Include="Grid2DLinear.h" />
     <ClCompile Include="Node.h" />
   </ItemGroup>
   <ItemGroup>

@@ -6,9 +6,10 @@
 #include "Grid2DQuad.h"
 #include "Grid1DQuad.h"
 #include "Grid1DBiLinear.h"
+#include "Grid2DLinear.h"
 #include <time.h>
 using namespace std;
-string root = "..\\1DTestDip5Quad\\";
+string root = "..\\2DTestDip2Linear\\";
 void print_full_matrix(Grid& stk) {
 	int n = stk.nodes.size();
 	double* mt = new double[n * n];
@@ -44,7 +45,8 @@ void print_full_matrix(Grid& stk) {
 }
 double F(Node *n)
 {
-	return -10*log(n->coords[0]) + 10 * log(100);
+	return -10 * log(n->coords[0]) + 10 * log(100);
+	//return -10*log(n->coords[0]) + 10 * log(100) + log(n->coords[1]);
 	//return 2 * log(n->coords[0]) + log(n->coords[1]);
 }
 void print_solution(Grid stk)
@@ -53,7 +55,7 @@ void print_solution(Grid stk)
 	for (int i = 0; i < stk.nodes.size(); i++)
 	{
 		//printf("%d %.16lf\n", i, F(stk.nodes[i]));
-		printf("%.16lf;\n", F(stk.nodes[i]));
+		printf("%d %.16lf;\n", i, F(stk.nodes[i]));
 	}
 }
 
@@ -71,7 +73,7 @@ void main()
 {
 	int n, n2, n3;
 	string path;
-	Grid1DQuad stk;
+	Grid2DLinear stk;
 	
 
 	ifstream fuzly(root + "nodes.txt");
@@ -159,11 +161,12 @@ void main()
 	stk.secondBoundary();
 	
 	stk.firstBoundary();
-	print_full_matrix(stk);
-	//double *x = stk.MSG();
-	stk.toLUsq();
-
-	double* x = stk.calcX();
+	//print_full_matrix(stk);
+	double *x = stk.LOS();
+	//stk.toLUsq();
+	//	6.659262206176e-01
+	// 1.719911641308e-01
+	//double* x = stk.calcX();
 	clock_t tt = clock() - s;
 	for (int i = 0; i < stk.nodes.size(); i++)
 		printf("%.16lf;\n", x[i]);
@@ -174,12 +177,12 @@ void main()
 	fsolution.precision(12);
 	for (int i = 0; i < stk.nodes.size(); i++)
 	{
-		fsolution << std::scientific << "\t" <<x[i] << "\n";
+		fsolution << std::scientific << "\t" <<x[i] << ";\n";
 	}
 	fsolution << "Точное решение\n";
 	for (int i = 0; i < stk.nodes.size(); i++)
 	{
-		fsolution << std::scientific << "\t" << F(stk.nodes[i]) << "\n";
+		fsolution << std::scientific << "\t" << F(stk.nodes[i]) << ";\n";
 	}
 	fsolution << "Относительная погрешность\n";
 	double acc = 0;

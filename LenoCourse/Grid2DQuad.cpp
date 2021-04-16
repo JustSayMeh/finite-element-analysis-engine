@@ -312,7 +312,7 @@ void Grid2DQuad::secondBoundary()
 			h = -nodes[el->nodes[0]]->coords[1] + nodes[el->nodes[el->nodes.size() - 1]]->coords[1];
 		}
 			
-		fill_localmatrixM1D(M, h, 0.5);
+		fill_localmatrixM1D(M, h, rp);
 		for (int j = 0; j < el->nodes.size(); j++)
 		{
 			int node_index = el->nodes[j];

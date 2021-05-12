@@ -9,7 +9,7 @@
 #include "Grid2DLinear.h"
 #include <time.h>
 using namespace std;
-string root = "..\\2DTestDip2Linear\\";
+string root = "..\\2DTestDip0.1Quad\\";
 void print_full_matrix(Grid& stk) {
 	int n = stk.nodes.size();
 	double* mt = new double[n * n];
@@ -73,7 +73,7 @@ void main()
 {
 	int n, n2, n3;
 	string path;
-	Grid2DLinear stk;
+	Grid2DQuad stk;
 	
 
 	ifstream fuzly(root + "nodes.txt");
@@ -180,8 +180,10 @@ void main()
 		fsolution << std::scientific << "\t" <<x[i] << ";\n";
 	}
 	fsolution << "Точное решение\n";
+	double* sol = new double[stk.nodes.size()];
 	for (int i = 0; i < stk.nodes.size(); i++)
 	{
+		sol[i] = F(stk.nodes[i]);
 		fsolution << std::scientific << "\t" << F(stk.nodes[i]) << ";\n";
 	}
 	fsolution << "Относительная погрешность\n";
@@ -197,5 +199,6 @@ void main()
 	acc = sqrt(acc) / sqrt(normF);
 	fsolution << "\t" << acc;
 	fsolution.close();
+	stk.calcQ(x, 0.5);
 	return;
 }

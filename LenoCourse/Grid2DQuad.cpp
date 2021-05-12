@@ -1,4 +1,6 @@
 #include "Grid2DQuad.h"
+#include <unordered_map>
+
 void fill_localmatrixM(double ms[81], double hr, double hz, double rk, double lambda)
 {
 	ms[0] = (0.00222222222222073 * hr * hr * hz + 0.0177777777777751 * hr * hz * rk) * lambda;
@@ -320,3 +322,140 @@ void Grid2DQuad::secondBoundary()
 		}
 	}
 };
+
+
+double Grid2DQuad::HQ(double t, int num, double *q)
+{
+	double Q[9];
+	Element* th = elems[num];//получаем конечный элемент
+	double hr = abs(nodes[th->nodes[0]]->coords[0] - nodes[th->nodes[2]]->coords[0]);
+	double hz = abs(nodes[th->nodes[0]]->coords[1] - nodes[th->nodes[6]]->coords[1]);
+	double rk = nodes[th->nodes[0]]->coords[0];
+	double sum = 0;
+	Q[0] = 0.25 * (8.0 * hr*hr * t - 6.0 * hr*hr) / hz + 1.0 * (4.0 * hr * rk * t - 3.0 * hr * rk) / hz + 0.333333333333333 * (-12.0 * hr*hr * t + 9.0 * hr*hr + 8.0 * hr * rk * t - 6.0 * hr * rk) / hz + 0.5 * (4.0 * hr*hr * t - 3.0 * hr*hr - 12.0 * hr * rk * t + 9.0 * hr * rk) / hz;
+	Q[1] = 0.25 * (-16.0 * hr*hr * t + 12.0 * hr*hr) / hz + 0.5 * (16.0 * hr * rk * t - 12.0 * hr * rk) / hz + 0.333333333333333 * (16.0 * hr*hr * t - 12.0 * hr*hr - 16.0 * hr * rk * t + 12.0 * hr * rk) / hz;
+	Q[2] = 0.25 * (8.0 * hr*hr * t - 6.0 * hr*hr) / hz + 0.5 * (-4.0 * hr * rk * t + 3.0 * hr * rk) / hz + 0.333333333333333 * (-4.0 * hr*hr * t + 3.0 * hr*hr + 8.0 * hr * rk * t - 6.0 * hr * rk) / hz;
+	Q[3] = 0.25 * (-16.0 * hr*hr * t + 8.0 * hr*hr) / hz + 1.0 * (-8.0 * hr * rk * t + 4.0 * hr * rk) / hz + 0.5 * (-8.0 * hr*hr * t + 4.0 * hr*hr + 24.0 * hr * rk * t - 12.0 * hr * rk) / hz + 0.333333333333333 * (24.0 * hr*hr * t - 12.0 * hr*hr - 16.0 * hr * rk * t + 8.0 * hr * rk) / hz;
+	Q[4] = (8 * hr*hr * t - 4 * hr*hr) / hz + (-16 * hr * rk * t + 8 * hr * rk) / hz + (-32 * hr*hr * t + 16 * hr*hr + 32 * hr * rk * t - 16 * hr * rk) / (3 * hz);
+	Q[5] = 0.25 * (-16.0 * hr*hr * t + 8.0 * hr*hr) / hz + 0.5 * (8.0 * hr * rk * t - 4.0 * hr * rk) / hz + 0.333333333333333 * (8.0 * hr*hr * t - 4.0 * hr*hr - 16.0 * hr * rk * t + 8.0 * hr * rk) / hz;
+	Q[6] = 0.25 * (8.0 * hr*hr * t - 2.0 * hr*hr) / hz + 1.0 * (4.0 * hr * rk * t - 1.0 * hr * rk) / hz + 0.333333333333333 * (-12.0 * hr*hr * t + 3.0 * hr*hr + 8.0 * hr * rk * t - 2.0 * hr * rk) / hz + 0.5 * (4.0 * hr*hr * t - 1.0 * hr*hr - 12.0 * hr * rk * t + 3.0 * hr * rk) / hz;
+	Q[7] = 0.25 * (-16.0 * hr*hr * t + 4.0 * hr*hr) / hz + 0.5 * (16.0 * hr * rk * t - 4.0 * hr * rk) / hz + 0.333333333333333 * (16.0 * hr*hr * t - 4.0 * hr*hr - 16.0 * hr * rk * t + 4.0 * hr * rk) / hz;
+	Q[8] = 0.25 * (8.0 * hr*hr * t - 2.0 * hr*hr) / hz + 0.5 * (-4.0 * hr * rk * t + 1.0 * hr * rk) / hz + 0.333333333333333 * (-4.0 * hr*hr * t + 1.0 * hr*hr + 8.0 * hr * rk * t - 2.0 * hr * rk) / hz;
+	
+	for (int i = 0; i < 9; i++)
+	{
+		sum += Q[i] * q[th->nodes[i]];
+	}
+
+	return sum;
+}
+
+
+double Grid2DQuad::VQ(double e, int num, double* q)
+{
+	double Q[9];
+	Element* th = elems[num];//получаем конечный элемент
+	double hr = abs(nodes[th->nodes[0]]->coords[0] - nodes[th->nodes[2]]->coords[0]);
+	double hz = abs(nodes[th->nodes[0]]->coords[1] - nodes[th->nodes[6]]->coords[1]);
+	double rk = nodes[th->nodes[0]]->coords[0];
+	double sum = 0;
+	Q[0] = 0.5 * (-12.0 * e * e * hr * hz + 9.0 * e * hr * hz - 12.0 * e * hz * rk + 9.0 * hz * rk) / hr + 1.0 * (4.0 * e * e * hr * hz - 3.0 * e * hr * hz + 4.0 * e * hz * rk - 3.0 * hz * rk) / hr + 0.333333333333333 * (8.0 * e * e * hr * hz - 6.0 * e * hr * hz + 8.0 * e * hz * rk - 6.0 * hz * rk) / hr;
+	Q[1] = 0.333333333333333 * (-16.0 * e * e * hr * hz + 8.0 * e * hr * hz - 16.0 * e * hz * rk + 8.0 * hz * rk) / hr + 1.0 * (-8.0 * e * e * hr * hz + 4.0 * e * hr * hz - 8.0 * e * hz * rk + 4.0 * hz * rk) / hr + 0.5 * (24.0 * e * e * hr * hz - 12.0 * e * hr * hz + 24.0 * e * hz * rk - 12.0 * hz * rk) / hr;
+	Q[2] = 0.5 * (-12.0 * e * e * hr * hz + 3.0 * e * hr * hz - 12.0 * e * hz * rk + 3.0 * hz * rk) / hr + 1.0 * (4.0 * e * e * hr * hz - 1.0 * e * hr * hz + 4.0 * e * hz * rk - 1.0 * hz * rk) / hr + 0.333333333333333 * (8.0 * e * e * hr * hz - 2.0 * e * hr * hz + 8.0 * e * hz * rk - 2.0 * hz * rk) / hr;
+	Q[3] = 0.333333333333333 * (-16.0 * e * e * hr * hz + 12.0 * e * hr * hz - 16.0 * e * hz * rk + 12.0 * hz * rk) / hr + 0.5 * (16.0 * e * e * hr * hz - 12.0 * e * hr * hz + 16.0 * e * hz * rk - 12.0 * hz * rk) / hr;
+	Q[4] = (-16 * e * e * hr * hz + 8 * e * hr * hz - 16 * e * hz * rk + 8 * hz * rk) / hr + (32 * e * e * hr * hz - 16 * e * hr * hz + 32 * e * hz * rk - 16 * hz * rk) / (3 * hr);
+	Q[5] = 0.333333333333333 * (-16.0 * e * e * hr * hz + 4.0 * e * hr * hz - 16.0 * e * hz * rk + 4.0 * hz * rk) / hr + 0.5 * (16.0 * e * e * hr * hz - 4.0 * e * hr * hz + 16.0 * e * hz * rk - 4.0 * hz * rk) / hr;
+	Q[6] = 0.5 * (-4.0 * e * e * hr * hz + 3.0 * e * hr * hz - 4.0 * e * hz * rk + 3.0 * hz * rk) / hr + 0.333333333333333 * (8.0 * e * e * hr * hz - 6.0 * e * hr * hz + 8.0 * e * hz * rk - 6.0 * hz * rk) / hr;
+	Q[7] = 0.333333333333333 * (-16.0 * e * e * hr * hz + 8.0 * e * hr * hz - 16.0 * e * hz * rk + 8.0 * hz * rk) / hr + 0.5 * (8.0 * e * e * hr * hz - 4.0 * e * hr * hz + 8.0 * e * hz * rk - 4.0 * hz * rk) / hr;
+	Q[8] = 0.5 * (-4.0 * e * e * hr * hz + 1.0 * e * hr * hz - 4.0 * e * hz * rk + 1.0 * hz * rk) / hr + 0.333333333333333 * (8.0 * e * e * hr * hz - 2.0 * e * hr * hz + 8.0 * e * hz * rk - 2.0 * hz * rk) / hr;
+
+	for (int i = 0; i < 9; i++)
+	{
+		sum += Q[i] * q[th->nodes[i]];
+	}
+
+	return sum;
+}
+
+struct Facet {
+	int a, b;
+
+	bool operator==(const Facet& p) const {
+		return a == p.a && b == p.b;
+	}
+
+};
+
+struct hash_fn
+{
+	std::size_t operator() (const Facet facet) const
+	{
+		std::size_t h1 = std::hash<int>()(facet.b);
+		std::size_t h2 = std::hash<int>()(facet.a);
+
+		return (h1 * 3671) ^ h2;
+	}
+};
+
+
+void Grid2DQuad::calcQ(double *x, double w)
+{
+	unordered_map<Facet, double, hash_fn> map;
+	for (int i = 0; i < elems.size(); i++)
+	{
+		vector<int> nodes = elems[i]->nodes;
+		double bottom = HQ(0, i, x);
+		double top = -HQ(1, i, x);
+		double left = VQ(0, i, x);
+		double right = -VQ(1, i, x);
+		
+		Facet bottom_facet = { nodes[0], nodes[2] };
+		Facet left_facet = { nodes[0], nodes[6] };
+		Facet top_facet = { nodes[6], nodes[8] };
+		Facet right_facet = { nodes[2], nodes[8] };
+
+		if (map.find(bottom_facet) != map.end())
+			map[bottom_facet] = bottom;
+		else
+		{
+			double oldbottom = map[bottom_facet];
+			map[bottom_facet] = bottom * w + oldbottom * (1 - w);
+		}
+			
+
+		if (map.find(left_facet) != map.end())
+			map[left_facet] = left;
+		else
+		{
+			double oldleft = map[left_facet];
+			map[left_facet] = left * w + oldleft * (1 - w);
+		}
+
+		if (map.find(top_facet) != map.end())
+			map[top_facet] = top;
+		else
+		{
+			double oldtop = map[top_facet];
+			map[top_facet] = top * w + oldtop * (1 - w);
+		}
+
+		if (map.find(right_facet) != map.end())
+			map[right_facet] = right;
+		else
+		{
+			double oldright = map[right_facet];
+			map[right_facet] = right * w + oldright * (1 - w);
+		}
+	}
+
+	for (int i = 0; i < elems.size(); i++)
+	{
+		vector<int> nodes = elems[i]->nodes;
+		double bottom = map[{ nodes[0], nodes[2] }];
+		double top = map[{ nodes[6], nodes[8] }];
+		double left = map[{ nodes[0], nodes[6] }];
+		double right = map[{ nodes[2], nodes[8] }];
+
+		printf("elem: %d bottom: %lf top: %lf left: %lf right: %lf\n", i, bottom, top, left, right);
+	}
+}

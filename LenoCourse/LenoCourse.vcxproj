@@ -125,6 +125,7 @@
     <ClCompile Include="Grid2DLinear.cpp" />
     <ClCompile Include="Grid2DLinear.h" />
     <ClCompile Include="Node.h" />
+    <ClCompile Include="IO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="functions.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="Grid1DBiLinear.h" />
     <ClInclude Include="Grid1DQuad.h" />
     <ClInclude Include="Grid2DQuad.h" />
+    <ClInclude Include="IO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

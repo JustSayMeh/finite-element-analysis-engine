@@ -49,13 +49,13 @@ void main()
 	Grid2DQuad stk;
 	read_nodes(stk);
 	print_solution(stk);
-	read_elems(stk);
+	read_elems(stk, read_regions(stk));
 	//drob_grid(stk);
 	read_F(stk);
 	read_first_B(stk);
 	read_second_B(stk);
 	
-
+	
 
 	clock_t s = clock();
 	stk.generatePortrate();

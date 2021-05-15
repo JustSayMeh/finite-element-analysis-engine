@@ -51,6 +51,53 @@ void read_elems(Grid& stk)
 	}
 	felems.close();
 }
+bool lessEqthan(vector<double> a, int offsetA, vector<double> b, int offsetB)
+{
+	for (int i = 0; i < b.size() - offsetB; i++)
+	{
+		if (a[i + offsetA] > b[i + offsetB])
+			return false;
+	}
+	return true;
+}
+
+vector<double> inReg(Grid stk, vector<int> nodes, vector<Region> regions)
+{
+
+		vector<double> left_bottom = stk.nodes[nodes[0]]->coords;
+		vector<double> right_bottom = stk.nodes[nodes[stk.right]]->coords;
+		vector<double> right_top = stk.nodes[nodes[stk.right + stk.top]]->coords;
+		vector<double> left_top = stk.nodes[nodes[stk.top]]->coords;
+
+
+		for (int i = 1; i < regions.size(); i++)
+		{
+			vector<double> th = regions[i].coords;
+			if (lessEqthan(th, 0, left_bottom, 0) && lessEqthan(right_top, 0, th, regions[i].dimension))
+				return regions[i].params;
+		}
+		return regions[0].params;
+}
+void read_elems(Grid& stk, vector<Region> regions) 
+{
+	int n, n2;
+	ifstream felems(root + "elems.txt");
+	felems >> n >> n2;
+	for (int i = 0; i < n; ++i)
+	{
+		vector<int> nodes;
+		vector<double> params;
+		for (int j = 0; j < n2; j++)
+		{
+			int th;
+			felems >> th;
+			nodes.push_back(th);
+		}
+		stk.addElem(nodes);
+		stk.elems[stk.elems.size() - 1]->parameters = inReg(stk, nodes, regions);
+	}
+	felems.close();
+}
 
 void read_F(Grid& stk)
 {
@@ -177,4 +224,42 @@ void print_result(size_t tt, Grid &stk, double *x, double (*F)(Node* n))
 	acc = sqrt(acc) / sqrt(normF);
 	fsolution << "\t" << acc;
 	fsolution.close();
+}
+
+
+vector<Region> read_regions(Grid& stk)
+{
+	int n, n2, csize;
+	ifstream regionsS(root + "regions.txt");
+	vector<Region> regions;
+	regionsS >> n >> csize >> n2;
+
+	regions.push_back({});
+	for (int i = 0; i < n2; i++)
+	{
+		double param;
+		regionsS >> param;
+		regions[0].params.push_back(param);
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		regions.push_back({});
+		for (int j = 0; j < 2; j++)
+			for (int k = 0; k < csize; k++)
+			{
+				double th;
+				regionsS >> th;
+				regions[i + 1].coords.push_back(th);
+			}
+		
+		for (int j = 0; j < n2; j++)
+		{
+			double param;
+			regionsS >> param;
+			regions[i + 1].params.push_back(param);
+		}
+		regions[i + 1].dimension = csize;
+	}
+	return regions;
 }

@@ -14,7 +14,7 @@ public:
 	vector<double> bf;
 	vector<int> elemnums;
 	double* diag, * al, * au;
-	int* ig, * jg;
+	int *ig, *jg, right = -1, top = -1;
 
 
 	void construct_matrix(double *A, double* M, Element* th);

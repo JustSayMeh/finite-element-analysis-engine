@@ -15,6 +15,7 @@ void read_elems(Grid& stk, vector<Region> regions);
 void read_F(Grid& stk);
 void read_first_B(Grid& stk);
 void read_second_B(Grid& stk);
+void read_third_B(Grid& stk);
 vector<Region> read_regions(Grid& stk);
 
 void print_full_matrix(Grid& stk);

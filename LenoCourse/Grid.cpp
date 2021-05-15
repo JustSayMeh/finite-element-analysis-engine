@@ -119,6 +119,12 @@ void Grid::addSecond(vector<int> i, vector<double> k)
 	secondB.push_back(el);
 }
 
+void Grid::addThird(vector<int> i, vector<double> k)
+{
+	Element* el = new Element(i, k);
+	thirdB.push_back(el);
+}
+
 
 
 

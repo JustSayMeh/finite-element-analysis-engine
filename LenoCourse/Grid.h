@@ -8,6 +8,7 @@ class Grid
 public:
 	vector<Element*> firstB;
 	vector<Element*> secondB;
+	vector<Element*> thirdB;
 	vector<Element*> elems;
 	vector<Node*> nodes;
 	vector<double> F;
@@ -32,9 +33,11 @@ public:
 	
 	void addFirst(int i, double k);
 	void addSecond(vector<int> i, vector<double> k);
+	void addThird(vector<int> i, vector<double> k);
 	
 	virtual void buildMatrix() {};
 	virtual void secondBoundary() {};
+	virtual void thirdBoundary() {};
 
 };
 

@@ -5,6 +5,7 @@ class Grid2DQuad : public Grid
 public:
    void buildMatrix();
    void secondBoundary();
+   void thirdBoundary();
    void calcQ(double* x, double w);
    Grid2DQuad()
    {

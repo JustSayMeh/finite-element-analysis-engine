@@ -158,6 +158,32 @@ void read_second_B(Grid& stk)
 	fsecondB.close();
 }
 
+void read_third_B(Grid& stk)
+{
+	int n, n2;
+	ifstream fthirdB(root + "thirdB.txt");
+	fthirdB >> n >> n2;
+	for (int i = 0; i < n; ++i)
+	{
+		vector<int> points;
+		vector<double> ub;
+		double r;
+		for (int i = 0; i < n2; i++)
+		{
+			int j;
+			fthirdB >> j;
+			points.push_back(j);
+		}
+		for (int i = 0; i < n2 + 1; i++)
+		{
+			double t;
+			fthirdB >> t;
+			ub.push_back(t);
+		}
+		stk.addThird(points, ub);
+	}
+	fthirdB.close();
+}
 
 void print_full_matrix(Grid& stk) {
 		int n = stk.nodes.size();

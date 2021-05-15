@@ -108,115 +108,6 @@ void fill_localmatrixM1D(double ms[9], double hr, double rp)
 	ms[8] = (0.133333333333333 * hr) * rp;
 }
 
-
-
-//void fill_localmatrixM(double ms[81], double hr, double hz, double rk, double lambda)
-//{
-//	ms[0] = (0.0177777777777751 * hr * hz) * lambda;
-//	ms[9] = ms[1] = (0.008888888888892 * hr * hz) * lambda;
-//	ms[10] = (0.0711111111111071 * hr * hz) * lambda;
-//	ms[18] = ms[2] = (-0.004444444444446 * hr * hz) * lambda;
-//	ms[19] = ms[11] = (0.00888888888889044 * hr * hz) * lambda;
-//	ms[20] = (0.0177777777777768 * hr * hz) * lambda;
-//	ms[27] = ms[3] = (0.00888888888888784 * hr * hz) * lambda;
-//	ms[28] = ms[12] = (0.00444444444444582 * hr * hz) * lambda;
-//	ms[29] = ms[21] = (-0.0022222222222229 * hr * hz) * lambda;
-//	ms[30] = (0.0711111111111109 * hr * hz) * lambda;
-//	ms[36] = ms[4] = (0.00444444444444582 * hr * hz) * lambda;
-//	ms[37] = ms[13] = (0.0355555555555539 * hr * hz) * lambda;
-//	ms[38] = ms[22] = (0.00444444444444513 * hr * hz) * lambda;
-//	ms[39] = ms[31] = (0.0355555555555557 * hr * hz) * lambda;
-//	ms[40] = (64 * hr * hz / 225) * lambda;
-//	ms[45] = ms[5] = (-0.0022222222222229 * hr * hz) * lambda;
-//	ms[46] = ms[14] = (0.00444444444444513 * hr * hz) * lambda;
-//	ms[47] = ms[23] = (0.00888888888888892 * hr * hz) * lambda;
-//	ms[48] = ms[32] = (-0.0177777777777778 * hr * hz) * lambda;
-//	ms[49] = ms[41] = (0.0355555555555556 * hr * hz) * lambda;
-//	ms[50] = (0.0711111111111111 * hr * hz) * lambda;
-//	ms[54] = ms[6] = (-0.00444444444444481 * hr * hz) * lambda;
-//	ms[55] = ms[15] = (-0.00222222222222179 * hr * hz) * lambda;
-//	ms[56] = ms[24] = (0.00111111111111089 * hr * hz) * lambda;
-//	ms[57] = ms[33] = (0.00888888888889 * hr * hz) * lambda;
-//	ms[58] = ms[42] = (0.00444444444444313 * hr * hz) * lambda;
-//	ms[59] = ms[51] = (-0.00222222222222157 * hr * hz) * lambda;
-//	ms[60] = (0.0177777777777777 * hr * hz) * lambda;
-//	ms[63] = ms[7] = (-0.00222222222222179 * hr * hz) * lambda;
-//	ms[64] = ms[16] = (-0.0177777777777783 * hr * hz) * lambda;
-//	ms[65] = ms[25] = (-0.00222222222222201 * hr * hz) * lambda;
-//	ms[66] = ms[34] = (0.00444444444444313 * hr * hz) * lambda;
-//	ms[67] = ms[43] = (0.0355555555555573 * hr * hz) * lambda;
-//	ms[68] = ms[52] = (0.00444444444444378 * hr * hz) * lambda;
-//	ms[69] = ms[61] = (0.00888888888888892 * hr * hz) * lambda;
-//	ms[70] = (0.0711111111111111 * hr * hz) * lambda;
-//	ms[72] = ms[8] = (0.00111111111111089 * hr * hz) * lambda;
-//	ms[73] = ms[17] = (-0.00222222222222201 * hr * hz) * lambda;
-//	ms[74] = ms[26] = (-0.00444444444444447 * hr * hz) * lambda;
-//	ms[75] = ms[35] = (-0.00222222222222157 * hr * hz) * lambda;
-//	ms[76] = ms[44] = (0.00444444444444378 * hr * hz) * lambda;
-//	ms[77] = ms[53] = (0.00888888888888933 * hr * hz) * lambda;
-//	ms[78] = ms[62] = (-0.00444444444444446 * hr * hz) * lambda;
-//	ms[79] = ms[71] = (0.00888888888888889 * hr * hz) * lambda;
-//	ms[80] = (0.0177777777777778 * hr * hz) * lambda;
-//}
-//void fill_localmatrixG(double ms[81], double hr, double hz, double rk, double lambda)
-//{
-//	ms[0] = (0.31111111111111 * hr / hz + 0.31111111111111 * hz / hr) * lambda;
-//	ms[9] = ms[1] = (0.155555555555557 * hr / hz - 0.355555555555554 * hz / hr) * lambda;
-//	ms[10] = (1.24444444444444 * hr / hz + 0.711111111111109 * hz / hr) * lambda;
-//	ms[18] = ms[2] = (-0.0777777777777775 * hr / hz + 0.0444444444444441 * hz / hr) * lambda;
-//	ms[19] = ms[11] = (0.155555555555555 * hr / hz - 0.355555555555554 * hz / hr) * lambda;
-//	ms[20] = (0.311111111111111 * hr / hz + 0.31111111111111 * hz / hr) * lambda;
-//	ms[27] = ms[3] = (-0.355555555555554 * hr / hz + 0.155555555555557 * hz / hr) * lambda;
-//	ms[28] = ms[12] = (-0.177777777777779 * hr / hz - 0.177777777777779 * hz / hr) * lambda;
-//	ms[29] = ms[21] = (0.0888888888888886 * hr / hz + 0.0222222222222224 * hz / hr) * lambda;
-//	ms[30] = (0.711111111111109 * hr / hz + 1.24444444444444 * hz / hr) * lambda;
-//	ms[36] = ms[4] = (-0.177777777777779 * hr / hz - 0.177777777777779 * hz / hr) * lambda;
-//	ms[37] = ms[13] = (-1.42222222222222 * hr / hz + 0.355555555555559 * hz / hr) * lambda;
-//	ms[38] = ms[22] = (-0.177777777777778 * hr / hz - 0.177777777777779 * hz / hr) * lambda;
-//	ms[39] = ms[31] = (0.355555555555559 * hr / hz - 1.42222222222222 * hz / hr) * lambda;
-//	ms[40] = (128 * hr / (45 * hz) + 128 * hz / (45 * hr)) * lambda;
-//	ms[45] = ms[5] = (0.0888888888888886 * hr / hz + 0.0222222222222224 * hz / hr) * lambda;
-//	ms[46] = ms[14] = (-0.177777777777778 * hr / hz - 0.177777777777779 * hz / hr) * lambda;
-//	ms[47] = ms[23] = (-0.355555555555555 * hr / hz + 0.155555555555557 * hz / hr) * lambda;
-//	ms[48] = ms[32] = (-0.177777777777777 * hr / hz + 0.177777777777777 * hz / hr) * lambda;
-//	ms[49] = ms[41] = (0.355555555555555 * hr / hz - 1.42222222222222 * hz / hr) * lambda;
-//	ms[50] = (0.711111111111111 * hr / hz + 1.24444444444444 * hz / hr) * lambda;
-//	ms[54] = ms[6] = (0.0444444444444441 * hr / hz - 0.0777777777777775 * hz / hr) * lambda;
-//	ms[55] = ms[15] = (0.0222222222222224 * hr / hz + 0.0888888888888886 * hz / hr) * lambda;
-//	ms[56] = ms[24] = (-0.011111111111111 * hr / hz - 0.011111111111111 * hz / hr) * lambda;
-//	ms[57] = ms[33] = (-0.355555555555554 * hr / hz + 0.155555555555555 * hz / hr) * lambda;
-//	ms[58] = ms[42] = (-0.177777777777779 * hr / hz - 0.177777777777778 * hz / hr) * lambda;
-//	ms[59] = ms[51] = (0.0888888888888886 * hr / hz + 0.0222222222222221 * hz / hr) * lambda;
-//	ms[60] = (0.31111111111111 * hr / hz + 0.311111111111111 * hz / hr) * lambda;
-//	ms[63] = ms[7] = (0.0222222222222224 * hr / hz + 0.0888888888888886 * hz / hr) * lambda;
-//	ms[64] = ms[16] = (0.177777777777777 * hr / hz - 0.177777777777777 * hz / hr) * lambda;
-//	ms[65] = ms[25] = (0.0222222222222221 * hr / hz + 0.0888888888888886 * hz / hr) * lambda;
-//	ms[66] = ms[34] = (-0.177777777777779 * hr / hz - 0.177777777777778 * hz / hr) * lambda;
-//	ms[67] = ms[43] = (-1.42222222222222 * hr / hz + 0.355555555555555 * hz / hr) * lambda;
-//	ms[68] = ms[52] = (-0.177777777777778 * hr / hz - 0.177777777777778 * hz / hr) * lambda;
-//	ms[69] = ms[61] = (0.155555555555557 * hr / hz - 0.355555555555555 * hz / hr) * lambda;
-//	ms[70] = (1.24444444444444 * hr / hz + 0.711111111111111 * hz / hr) * lambda;
-//	ms[72] = ms[8] = (-0.011111111111111 * hr / hz - 0.011111111111111 * hz / hr) * lambda;
-//	ms[73] = ms[17] = (0.0222222222222221 * hr / hz + 0.0888888888888886 * hz / hr) * lambda;
-//	ms[74] = ms[26] = (0.0444444444444443 * hr / hz - 0.0777777777777775 * hz / hr) * lambda;
-//	ms[75] = ms[35] = (0.0888888888888886 * hr / hz + 0.0222222222222221 * hz / hr) * lambda;
-//	ms[76] = ms[44] = (-0.177777777777778 * hr / hz - 0.177777777777778 * hz / hr) * lambda;
-//	ms[77] = ms[53] = (-0.355555555555555 * hr / hz + 0.155555555555556 * hz / hr) * lambda;
-//	ms[78] = ms[62] = (-0.0777777777777775 * hr / hz + 0.0444444444444443 * hz / hr) * lambda;
-//	ms[79] = ms[71] = (0.155555555555556 * hr / hz - 0.355555555555555 * hz / hr) * lambda;
-//	ms[80] = (0.311111111111111 * hr / hz + 0.311111111111111 * hz / hr) * lambda;
-//}
-//
-//void fill_localmatrixM1D(double ms[9], double hr, double rp)
-//{
-//	ms[0] = (0.133333333333333 * hr);
-//	ms[3] = ms[1] = (0.0666666666666673 * hr) ;
-//	ms[4] = (8 * hr / 15) ;
-//	ms[6] = ms[2] = (-0.0333333333333332 * hr) ;
-//	ms[7] = ms[5] = (0.0666666666666667 * hr) ;
-//	ms[8] = (0.133333333333333 * hr) ;
-//}
-
 void Grid2DQuad::buildMatrix()
 {
 
@@ -253,12 +144,6 @@ void Grid2DQuad::buildMatrix()
 		construct_matrix(A, M, th);
 
 	}
-	//for (int i = 0; i < nodes.size(); ++i)
-	//{
-	//	for (int j = 0; j < nodes.size(); ++j)
-	//		printf("%.14lf,", AG[i * nodes.size() + j]);
-	//	printf(";");
-	//}
 	return;
 }
 
@@ -283,6 +168,53 @@ void Grid2DQuad::secondBoundary()
 		{
 			int node_index = el->nodes[j];
 			bf[node_index] += M[j * 3] * el->parameters[0] + M[j * 3 + 1] * el->parameters[1] + M[j * 3 + 2] * el->parameters[2];
+		}
+	}
+};
+
+void Grid2DQuad::thirdBoundary()
+{
+	int n = 3;
+	double M[9];
+	double h, rp;
+	for (int i = 0; i < thirdB.size(); i++)
+	{
+		Element* el = thirdB[i];
+
+		h = -nodes[el->nodes[0]]->coords[0] + nodes[el->nodes[el->nodes.size() - 1]]->coords[0];
+		rp = nodes[el->nodes[0]]->coords[0];
+		if (h == 0)
+		{
+			h = -nodes[el->nodes[0]]->coords[1] + nodes[el->nodes[el->nodes.size() - 1]]->coords[1];
+		}
+
+		fill_localmatrixM1D(M, h, rp * el->parameters[0]);
+
+		for (int j = 0; j < el->nodes.size(); j++)
+		{
+			int node_index = el->nodes[j];
+			bf[node_index] += M[j * 3] * el->parameters[1] + M[j * 3 + 1] * el->parameters[2] + M[j * 3 + 2] * el->parameters[3];
+		}
+
+
+		for (int j = 0; j < n; ++j)
+		{
+			for (int jj = 0; jj < n; ++jj)
+			{
+				if (el->nodes[jj] >= el->nodes[j])
+					continue;
+				int indx = j * n + jj;
+				int s = ig[el->nodes[j]];
+				int e = ig[el->nodes[j] + 1];
+				for (; s < e && jg[s] != el->nodes[jj]; ++s)
+					;
+				if (s != e)
+				{
+					al[s] += M[indx];
+					au[s] += M[indx];
+				}
+			}
+			diag[el->nodes[j]] += M[j * n + j];
 		}
 	}
 };

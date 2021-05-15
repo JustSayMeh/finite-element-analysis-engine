@@ -54,14 +54,14 @@ void main()
 	read_F(stk);
 	read_first_B(stk);
 	read_second_B(stk);
-	
+	read_third_B(stk);
 	
 
 	clock_t s = clock();
 	stk.generatePortrate();
 	stk.buildMatrix();
-	stk.secondBoundary();
-	
+	stk.thirdBoundary();
+	//stk.secondBoundary();
 	stk.firstBoundary();
 	//print_full_matrix(stk);
 	double *x = stk.LOS();

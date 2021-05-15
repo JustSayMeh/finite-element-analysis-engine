@@ -230,64 +230,28 @@ void Grid2DQuad::buildMatrix()
 	for (int i = 0; i < elems.size(); ++i)
 	{
 
-		double A[81], M[81], b[9] = {0}, llh[2] = { 0 }, lambda = 0;//llh-разница координат на элементе(x,y,z)
+		double A[81], M[81], llh[2] = { 0 }, lambda = 0;//llh-разница координат на элементе(x,y,z)
 		Element* th = elems[i];//получаем конечный элемент
 		int n = th->nodes.size();
 		llh[0] = abs(nodes[th->nodes[0]]->coords[0] - nodes[th->nodes[2]]->coords[0]);
 		llh[1] = abs(nodes[th->nodes[0]]->coords[1] - nodes[th->nodes[6]]->coords[1]);
-		for (int j = 0; j < n; ++j)
+		if (th->parameters.size() != 0)
+			lambda = th->parameters[0];
+		else
 		{
-			lambda += nodes[th->nodes[j]]->params[0];
+			for (int j = 0; j < n; ++j)
+			{
+				lambda += nodes[th->nodes[j]]->params[0];
+			}
+			lambda /= n;
 		}
-		lambda /= n;
+
 
 
 		fill_localmatrixG(A, llh[0], llh[1], nodes[th->nodes[0]]->coords[0], lambda);
 		fill_localmatrixM(M, llh[0], llh[1], nodes[th->nodes[0]]->coords[0], 1);
+		construct_matrix(A, M, th);
 
-		for (int j = 0; j < n; j++) {
-			for (int k = 0; k < n; k++)
-				b[j] += M[j * n + k] * F[th->nodes[k]];
-		}
-
-
-		for (int j = 0; j < n; j++)
-		{
-
-			for (int k = 0; k < n; k++)
-			{
-				printf("%lf, ", A[j * n + k]);
-			}
-			printf(";\n");
-		}
-
-		//printf("\n");
-		/*	for (int k = 0; k < 4; k++)
-			{
-				printf("%lf, ", F(nodes[th->nodes[k]]->r, nodes[th->nodes[k]]->z));
-			}*/
-	//	printf("\n");
-		for (int j = 0; j < n; ++j)
-		{
-			bf[th->nodes[j]] += b[j];
-			for (int jj = 0; jj < n; ++jj)
-			{
-				if (elems[i]->nodes[jj] >= th->nodes[j])
-					continue;
-				int indx = j * n + jj;
-				int s = ig[elems[i]->nodes[j]];
-				int e = ig[elems[i]->nodes[j] + 1];
-				for (; s < e && jg[s] != elems[i]->nodes[jj]; ++s)
-					;
-				if (s != e)
-				{
-					al[s] += A[indx];
-					au[s] += A[indx];
-				}
-				//AG[elems[i]->nodes[j] * nodes.size() + elems[i]->nodes[jj]] += A[indx];
-			}
-			diag[elems[i]->nodes[j]] += A[j * n + j];
-		}
 	}
 	//for (int i = 0; i < nodes.size(); ++i)
 	//{

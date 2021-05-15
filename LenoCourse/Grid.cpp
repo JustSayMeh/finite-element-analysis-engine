@@ -11,6 +11,13 @@ void Grid::addElem(vector<int> nodes)
 {
    elems.push_back(new Element(nodes));
 }
+void Grid::addElem(vector<int> nodes, vector<double> params)
+{
+	Element* elem = new Element(nodes);
+	for (int i = 0; i < params.size(); i++)
+		elem->parameters.push_back(params[i]);
+	elems.push_back(elem);
+}
 
 void Grid::generatePortrate()
 {
@@ -396,4 +403,53 @@ double *Grid::calcX()
 
 	}
 	return b;
+}
+
+void Grid::construct_matrix(double* A, double *M, Element *th)
+{
+	int n = th->nodes.size();
+	double* b = new double[n];
+	for (int j = 0; j < n; j++) 
+	{
+		b[j] = 0;
+	}
+
+	for (int j = 0; j < n; j++) {
+		for (int k = 0; k < n; k++)
+			b[j] += M[j * n + k] * F[th->nodes[k]];
+	}
+
+
+	for (int j = 0; j < n; j++)
+	{
+
+		for (int k = 0; k < n; k++)
+		{
+			printf("%lf, ", A[j * n + k]);
+		}
+		printf(";\n");
+	}
+
+	for (int j = 0; j < n; ++j)
+	{
+		bf[th->nodes[j]] += b[j];
+		for (int jj = 0; jj < n; ++jj)
+		{
+			if (th->nodes[jj] >= th->nodes[j])
+				continue;
+			int indx = j * n + jj;
+			int s = ig[th->nodes[j]];
+			int e = ig[th->nodes[j] + 1];
+			for (; s < e && jg[s] != th->nodes[jj]; ++s)
+				;
+			if (s != e)
+			{
+				al[s] += A[indx];
+				au[s] += A[indx];
+			}
+			//AG[elems[i]->nodes[j] * nodes.size() + elems[i]->nodes[jj]] += A[indx];
+		}
+		diag[th->nodes[j]] += A[j * n + j];
+	}
+	delete[] b;
 }

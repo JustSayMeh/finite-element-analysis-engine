@@ -16,9 +16,12 @@ public:
 	double* diag, * al, * au;
 	int* ig, * jg;
 
+
+	void construct_matrix(double *A, double* M, Element* th);
 public:
 	void addNode(vector<double> xyz, vector<double> params);
 	void addElem(vector<int> nodes);
+	void addElem(vector<int> nodes, vector<double> params);
 	double* LOS();
 	double* MSG();
 	void toLUsq();

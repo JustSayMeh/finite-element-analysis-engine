@@ -81,6 +81,7 @@ void main()
 	ifstream fF(root + "F.txt");
 	ifstream ffirstB(root + "firstB.txt");
 	ifstream fsecondB(root + "secondB.txt");
+	ifstream regions(root + "regions.txt");
 
 	fuzly >> n >> n2 >> n3;
 	for (int i = 0; i < n; ++i)
@@ -107,12 +108,14 @@ void main()
 	for (int i = 0; i < n; ++i)
 	{
 		vector<int> nodes;
+		vector<double> params;
 		for (int j = 0; j < n2; j++)
 		{
 			int th;
 			felems >> th;
 			nodes.push_back(th);
 		}
+
 		stk.addElem(nodes);
 	}
 	fF >> n;

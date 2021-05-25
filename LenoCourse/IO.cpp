@@ -2,7 +2,7 @@
 #include "IO.h"
 #include <fstream> 
 
-string root = "..\\2DTestDip0.1Quad\\";
+extern string root;
 
 void read_nodes(Grid& stk)
 {

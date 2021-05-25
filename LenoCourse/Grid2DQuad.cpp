@@ -167,7 +167,7 @@ void Grid2DQuad::secondBoundary()
 		for (int j = 0; j < el->nodes.size(); j++)
 		{
 			int node_index = el->nodes[j];
-			bf[node_index] += M[j * 3] * el->parameters[0] + M[j * 3 + 1] * el->parameters[1] + M[j * 3 + 2] * el->parameters[2];
+			bf[node_index] += (M[j * 3] * el->parameters[0] + M[j * 3 + 1] * el->parameters[1] + M[j * 3 + 2] * el->parameters[2]);
 		}
 	}
 };
@@ -310,37 +310,37 @@ void Grid2DQuad::calcQ(double *x, double w)
 		Facet top_facet = { nodes[6], nodes[8] };
 		Facet right_facet = { nodes[2], nodes[8] };
 
-		if (map.find(bottom_facet) != map.end())
+		if (map.find(bottom_facet) == map.end())
 			map[bottom_facet] = bottom;
 		else
 		{
 			double oldbottom = map[bottom_facet];
-			map[bottom_facet] = bottom * w + oldbottom * (1 - w);
+			map[bottom_facet] = fabs(bottom) * w + fabs(oldbottom) * (1 - w);
 		}
 			
 
-		if (map.find(left_facet) != map.end())
+		if (map.find(left_facet) == map.end())
 			map[left_facet] = left;
 		else
 		{
 			double oldleft = map[left_facet];
-			map[left_facet] = left * w + oldleft * (1 - w);
+			map[left_facet] = fabs(left) * w + fabs(oldleft) * (1 - w);
 		}
 
-		if (map.find(top_facet) != map.end())
+		if (map.find(top_facet) == map.end())
 			map[top_facet] = top;
 		else
 		{
 			double oldtop = map[top_facet];
-			map[top_facet] = top * w + oldtop * (1 - w);
+			map[top_facet] = fabs(top) * w + fabs(oldtop) * (1 - w);
 		}
 
-		if (map.find(right_facet) != map.end())
+		if (map.find(right_facet) == map.end())
 			map[right_facet] = right;
 		else
 		{
 			double oldright = map[right_facet];
-			map[right_facet] = right * w + oldright * (1 - w);
+			map[right_facet] = fabs(right) * w + fabs(oldright) * (1 - w);
 		}
 	}
 

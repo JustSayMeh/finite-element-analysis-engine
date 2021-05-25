@@ -11,9 +11,11 @@
 #include "Grid2DLinear.h"
 
 using namespace std;
+string root = "..\\2DTestDip1Quad\\";
 
 double F(Node *n)
 {
+	//return n->coords[0] * n->coords[1];
 	return -10 * log(n->coords[0]) + 10 * log(100);
 	//return -10*log(n->coords[0]) + 10 * log(100) + log(n->coords[1]);
 	//return 2 * log(n->coords[0]) + log(n->coords[1]);
@@ -40,13 +42,26 @@ void drob_grid(Grid stk) {
 	}
 }
 
-
+Grid &factory(string name)
+{
+	if (name.find("Quad") != string::npos && name.find("2D") != string::npos)
+	{
+		Grid2DQuad stk;
+		return stk;
+	}
+	else if (name.find("Linear") != string::npos && name.find("2D") != string::npos)
+	{
+		Grid2DLinear stk;
+		return stk;
+	}
+	
+}
 
 void main()
 {
 	int n, n2, n3;
 	string path;
-	Grid2DQuad stk;
+	Grid stk = factory(root);
 	read_nodes(stk);
 	print_solution(stk);
 	read_elems(stk, read_regions(stk));
@@ -61,7 +76,7 @@ void main()
 	stk.generatePortrate();
 	stk.buildMatrix();
 	stk.thirdBoundary();
-	//stk.secondBoundary();
+	stk.secondBoundary();
 	stk.firstBoundary();
 	//print_full_matrix(stk);
 	double *x = stk.LOS();
@@ -74,6 +89,11 @@ void main()
 		printf("%.16lf;\n", x[i]);
 	printf("-------------------------\nTime: %d;\n", tt);
 	print_result(tt, stk, x, F);
+
 	//stk.calcQ(x, 0.5);
+	//for (int i = 0; i < stk.nodes.size(); i += 241)
+	//{
+	//	printf("%.16lf;\n", x[i]);
+	//}
 	return;
 }

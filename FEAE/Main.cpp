@@ -11,8 +11,11 @@
 #include "Grid2DLinear.h"
 
 using namespace std;
-string root = "..\\2DTestDip1Quad\\";
+// Папка с тестом
+string root = "..\\2DTestRegions0.1Quad2K\\";
 
+// Искомая функция
+// Для проверки результатов расчетов
 double F(Node *n)
 {
 	//return n->coords[0] * n->coords[1];
@@ -20,7 +23,7 @@ double F(Node *n)
 	//return -10*log(n->coords[0]) + 10 * log(100) + log(n->coords[1]);
 	//return 2 * log(n->coords[0]) + log(n->coords[1]);
 }
-
+// Рапечатать верное решение
 void print_solution(Grid stk)
 {
 	printf("solution\n");
@@ -30,7 +33,7 @@ void print_solution(Grid stk)
 		printf("%d %.16lf;\n", i, F(stk.nodes[i]));
 	}
 }
-
+// Дробление сетки для биквадратичных элементов
 void drob_grid(Grid stk) {
 	printf("%.16lf 1 0\n", stk.nodes[0]->coords[0]);
 	for (int i = 1; i < stk.nodes.size(); i+=1)
@@ -41,7 +44,7 @@ void drob_grid(Grid stk) {
 		printf("%.16lf 1 0\n", stk.nodes[i]->coords[0]);
 	}
 }
-
+// Фабрика сеток. В зависимости от name возвращает определенную сетку
 Grid *factory(string name)
 {
 	if (name.find("Quad") != string::npos && name.find("2D") != string::npos)
@@ -59,6 +62,7 @@ void main()
 {
 	int n, n2, n3;
 	string path;
+	// получить сетку по названию папки теста
 	Grid *stk = factory(root);
 	read_nodes(*stk);
 	print_solution(*stk);

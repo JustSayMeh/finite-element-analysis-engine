@@ -18,7 +18,7 @@ void Grid::addElem(vector<int> nodes, vector<double> params)
 		elem->parameters.push_back(params[i]);
 	elems.push_back(elem);
 }
-
+// Генерация портрета матрицы
 void Grid::generatePortrate()
 {
 	int n = nodes.size();
@@ -68,7 +68,7 @@ void Grid::addF(double f)
 }
 
 
-
+// Применить первые краевые
 void Grid::firstBoundary()
 {
 	map<int, double> mp;
@@ -167,7 +167,8 @@ void koeff(double* vec, double k, double* res, int N)
 	for (int i = 0; i < N; i++)
 		res[i] = k * vec[i];
 }
-void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double* z, int* ia, int* ja, double* di, double* al, double* au, double* vec, double* Ar, double* res)
+
+void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double* z, int* ia, int* ja, double* di, double* al, double* au, double* vec, double* Ar, double* res, double f1 = 1e-10, double f2 = 1e-2)
 {
 	double a, b, norm;
 	int k;
@@ -185,8 +186,8 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 	{
 		norm = scal(p, p, N);
 		a = scal(p, r, N) / norm;
-		if (abs(a) < 1e-10)
-			a = 1e-2 * (a < 0)? -1 : 1;
+		if (abs(a) < f1)
+			a = f2 * (a < 0)? -1 : 1;
 		koeff(z, a, res, N);
 		sum(x, res, x, N);
 		koeff(p, -a, res, N);
@@ -220,11 +221,11 @@ void Iter(int N, int maxiter, double e, double* r, double* p, double* x, double*
 	}
 	return;
 }
-
+// Решатель
 double * Grid::LOS()
 {
 	int N = nodes.size();
-	int maxiter = 1000000;
+	int maxiter = 10000000;
 	double e = 1e-16;
 	double* pr = new double[N];
 	double* x = new double[N];
@@ -247,7 +248,8 @@ double * Grid::LOS()
 		if (jg[i] == 10)
 			printf("%lf - %d   ", au[i], i);
 	}*/
-	Iter(N, maxiter, e, r, p, x, z, ig, jg, diag, al, au, pr, Ar, res);
+	// Итерации решателя
+	Iter(N, maxiter, e, r, p, x, z, ig, jg, diag, al, au, pr, Ar, res, 1e-14, 1e-7);
 	return x;
 }
 

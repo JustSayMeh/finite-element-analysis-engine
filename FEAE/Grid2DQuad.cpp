@@ -1,6 +1,7 @@
 #include "Grid2DQuad.h"
 #include <unordered_map>
 
+// Матрица М
 void fill_localmatrixM(double ms[81], double hr, double hz, double rk, double lambda)
 {
 	ms[0] = (0.00222222222222073 * hr * hr * hz + 0.0177777777777751 * hr * hz * rk) * lambda;
@@ -49,6 +50,7 @@ void fill_localmatrixM(double ms[81], double hr, double hz, double rk, double la
 	ms[79] = ms[71] = (0.00888888888888895 * hr * hr * hz + 0.00888888888888888 * hr * hz * rk) * lambda;
 	ms[80] = (0.0155555555555555 * hr * hr * hz + 0.0177777777777778 * hr * hz * rk) * lambda;
 }
+// Матрица G локальная
 void fill_localmatrixG(double ms[81], double hr, double hz, double rk, double lambda)
 {
 	ms[0] = (0.5 * (-0.399999999999999 * hr * hr - 3.2 * hr * rk) / hz + 1.0 * (0.149999999999999 * hr * hr + 1.2 * hr * rk) / hz + 0.333333333333333 * (0.266666666666659 * hr * hr + 2.13333333333333 * hr * rk) / hz + 0.25 * (-6.0 * hr * hz - 28.0 * hz * rk) / hr + 0.5 * (-3.0 * hr * hz - 14.0 * hz * rk) / hr + 1.0 * (0.5 * hr * hz + 2.33333333333333 * hz * rk) / hr + 0.2 * (2.0 * hr * hz + 9.33333333333333 * hz * rk) / hr + 0.333333333333333 * (6.5 * hr * hz + 30.3333333333333 * hz * rk) / hr) * lambda;
@@ -107,7 +109,7 @@ void fill_localmatrixM1D(double ms[9], double hr, double rp)
 	ms[7] = ms[5] = (0.0666666666666667 * hr)* rp;
 	ms[8] = (0.133333333333333 * hr) * rp;
 }
-
+// сборка глобальной матрицы
 void Grid2DQuad::buildMatrix()
 {
 
@@ -117,13 +119,14 @@ void Grid2DQuad::buildMatrix()
 		bf.push_back(0);
 	}
 
-
+	// Заполнение локальной матрицы
 	for (int i = 0; i < elems.size(); ++i)
 	{
-
+		
 		double A[81], M[81], llh[2] = { 0 }, lambda = 0;//llh-разница координат на элементе(x,y,z)
 		Element* th = elems[i];//получаем конечный элемент
 		int n = th->nodes.size();
+		// Вычисление шагов
 		llh[0] = abs(nodes[th->nodes[0]]->coords[0] - nodes[th->nodes[2]]->coords[0]);
 		llh[1] = abs(nodes[th->nodes[0]]->coords[1] - nodes[th->nodes[6]]->coords[1]);
 		if (th->parameters.size() != 0)
@@ -147,22 +150,23 @@ void Grid2DQuad::buildMatrix()
 	return;
 }
 
-
+// вторые краевые
 void Grid2DQuad::secondBoundary()
 {
 	double M[9];
 	double h, rp;
+	// Итерация по вторым краевым
 	for (int i = 0; i < secondB.size(); i++)
 	{
 		Element* el = secondB[i];
-
+		// вычисление шага в грани
 		h = -nodes[el->nodes[0]]->coords[0] + nodes[el->nodes[el->nodes.size() - 1]]->coords[0];
 		rp = nodes[el->nodes[0]]->coords[0];
 		if (h == 0)
 		{
 			h = -nodes[el->nodes[0]]->coords[1] + nodes[el->nodes[el->nodes.size() - 1]]->coords[1];
 		}
-			
+		// заполнение матрицы М	
 		fill_localmatrixM1D(M, h, rp);
 		for (int j = 0; j < el->nodes.size(); j++)
 		{
@@ -177,6 +181,7 @@ void Grid2DQuad::thirdBoundary()
 	int n = 3;
 	double M[9];
 	double h, rp;
+	// Итерации по третьим краевым
 	for (int i = 0; i < thirdB.size(); i++)
 	{
 		Element* el = thirdB[i];
@@ -189,14 +194,14 @@ void Grid2DQuad::thirdBoundary()
 		}
 
 		fill_localmatrixM1D(M, h, rp * el->parameters[0]);
-
+		// Заполняем правую часть
 		for (int j = 0; j < el->nodes.size(); j++)
 		{
 			int node_index = el->nodes[j];
 			bf[node_index] += M[j * 3] * el->parameters[1] + M[j * 3 + 1] * el->parameters[2] + M[j * 3 + 2] * el->parameters[3];
 		}
 
-
+		// Внесение изменение в матрицу
 		for (int j = 0; j < n; ++j)
 		{
 			for (int jj = 0; jj < n; ++jj)
@@ -219,7 +224,7 @@ void Grid2DQuad::thirdBoundary()
 	}
 };
 
-
+// Вычисление потока через горизонтальную грань
 double Grid2DQuad::HQ(double t, int num, double *q)
 {
 	double Q[9];
@@ -246,7 +251,7 @@ double Grid2DQuad::HQ(double t, int num, double *q)
 	return sum;
 }
 
-
+// Вычисление потока через вертикальную грань
 double Grid2DQuad::VQ(double e, int num, double* q)
 {
 	double Q[9];
@@ -293,7 +298,7 @@ struct hash_fn
 	}
 };
 
-
+// Вычисление потоков
 void Grid2DQuad::calcQ(double *x, double w)
 {
 	unordered_map<Facet, double, hash_fn> map;
@@ -310,6 +315,7 @@ void Grid2DQuad::calcQ(double *x, double w)
 		Facet top_facet = { nodes[6], nodes[8] };
 		Facet right_facet = { nodes[2], nodes[8] };
 
+		// Уравнивание соседних потоков
 		if (map.find(bottom_facet) == map.end())
 			map[bottom_facet] = bottom;
 		else

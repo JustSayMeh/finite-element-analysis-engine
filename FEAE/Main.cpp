@@ -19,7 +19,12 @@ string root = "..\\2DTestRegions0.1Quad2K\\";
 double F(Node *n)
 {
 	//return n->coords[0] * n->coords[1];
-	return -10 * log(n->coords[0]) + 10 * log(100);
+	double lambda = 1000;
+	if (n->coords[0] > 5)
+		lambda = 700;
+	else if (n->coords[0] > 2.5)
+		lambda = 50;
+	return -10 / lambda * log(n->coords[0]) + 10 * log(100);
 	//return -10*log(n->coords[0]) + 10 * log(100) + log(n->coords[1]);
 	//return 2 * log(n->coords[0]) + log(n->coords[1]);
 }
@@ -35,13 +40,13 @@ void print_solution(Grid stk)
 }
 // Дробление сетки для биквадратичных элементов
 void drob_grid(Grid stk) {
-	printf("%.16lf 1 0\n", stk.nodes[0]->coords[0]);
+	printf("%.16lf\n", stk.nodes[0]->coords[0]);
 	for (int i = 1; i < stk.nodes.size(); i+=1)
 	{
 		//printf("%d %.16lf\n", i, F(stk.nodes[i]));
 		
-		printf("%.16lf 1 0\n", (stk.nodes[i - 1]->coords[0] + stk.nodes[i]->coords[0]) / 2);
-		printf("%.16lf 1 0\n", stk.nodes[i]->coords[0]);
+		printf("%.16lf\n", (stk.nodes[i - 1]->coords[0] + stk.nodes[i]->coords[0]) / 2);
+		printf("%.16lf\n", stk.nodes[i]->coords[0]);
 	}
 }
 // Фабрика сеток. В зависимости от name возвращает определенную сетку
@@ -65,9 +70,10 @@ void main()
 	// получить сетку по названию папки теста
 	Grid *stk = factory(root);
 	read_nodes(*stk);
+	//drob_grid(*stk);
 	print_solution(*stk);
 	read_elems(*stk, read_regions(*stk));
-	//drob_grid(stk);
+
 	read_F(*stk);
 	read_first_B(*stk);
 	read_second_B(*stk);

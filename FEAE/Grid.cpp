@@ -226,7 +226,7 @@ double * Grid::LOS()
 {
 	int N = nodes.size();
 	int maxiter = 10000000;
-	double e = 1e-16;
+	double e = 1e-10;
 	double* pr = new double[N];
 	double* x = new double[N];
 	double* res = new double[N];
@@ -249,7 +249,7 @@ double * Grid::LOS()
 			printf("%lf - %d   ", au[i], i);
 	}*/
 	// Итерации решателя
-	Iter(N, maxiter, e, r, p, x, z, ig, jg, diag, al, au, pr, Ar, res, 1e-14, 1e-7);
+	Iter(N, maxiter, e, r, p, x, z, ig, jg, diag, al, au, pr, Ar, res, 1e-16, 2e-16);
 	return x;
 }
 

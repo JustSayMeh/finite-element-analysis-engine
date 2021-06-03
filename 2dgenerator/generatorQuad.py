@@ -3,7 +3,12 @@ x = []
 y = []
 
 def F(r, z):
-    return -10*math.log(r) + 10 * math.log(100)
+    lambdaa = 1000
+    if r > 5:
+        lambdaa = 700
+    elif r > 2.5:
+	    lambdaa = 50
+    return -10 / lambdaa * math.log(r) + 10 * math.log(100)
 
 with open('axisX.txt', 'r') as f :
     for line in f.readlines():

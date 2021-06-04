@@ -23,7 +23,7 @@ public:
 	void addNode(vector<double> xyz, vector<double> params);
 	void addElem(vector<int> nodes);
 	void addElem(vector<int> nodes, vector<double> params);
-	double* LOS();
+	double* LOS(double, double);
 	double* MSG();
 	void toLUsq();
 	double *calcX();

@@ -3,8 +3,27 @@
 #include <fstream> 
 
 extern string root;
+bool lessEqthan(vector<double> a, int offsetA, vector<double> b, int offsetB)
+{
+	for (int i = 0; i < b.size() - offsetB; i++)
+	{
+		if (a[i + offsetA] > b[i + offsetB])
+			return false;
+	}
+	return true;
+}
 
-void read_nodes(Grid& stk)
+vector<double> inReg(Grid stk, Node* node, vector<Region> regions)
+{
+	for (int i = 1; i < regions.size(); i++)
+	{
+		vector<double> th = regions[i].coords;
+		if (lessEqthan(th, 0, node->coords, 0) && lessEqthan(node->coords, 0, th, regions[i].dimension))
+			return regions[i].params;
+	}
+	return regions[0].params;
+}
+void read_nodes(Grid& stk, vector<Region> regions)
 {
 	int n, n2, n3;
 	ifstream fuzly(root + "nodes.txt");
@@ -26,6 +45,11 @@ void read_nodes(Grid& stk)
 			params.push_back(r);
 		}
 		stk.addNode(coords, params);
+		if (regions.size() > 0)
+		{
+			stk.nodes.back()->params = inReg(stk, stk.nodes.back(), regions);
+		}
+			
 	}
 	fuzly.close();
 }
@@ -51,16 +75,6 @@ void read_elems(Grid& stk)
 	}
 	felems.close();
 }
-bool lessEqthan(vector<double> a, int offsetA, vector<double> b, int offsetB)
-{
-	for (int i = 0; i < b.size() - offsetB; i++)
-	{
-		if (a[i + offsetA] > b[i + offsetB])
-			return false;
-	}
-	return true;
-}
-
 vector<double> inReg(Grid stk, vector<int> nodes, vector<Region> regions)
 {
 
@@ -78,7 +92,7 @@ vector<double> inReg(Grid stk, vector<int> nodes, vector<Region> regions)
 		}
 		return regions[0].params;
 }
-void read_elems(Grid& stk, vector<Region> regions) 
+void read_elems(Grid& stk, vector<Region> regions)
 {
 	int n, n2;
 	ifstream felems(root + "elems.txt");
@@ -94,7 +108,8 @@ void read_elems(Grid& stk, vector<Region> regions)
 			nodes.push_back(th);
 		}
 		stk.addElem(nodes);
-		stk.elems[stk.elems.size() - 1]->parameters = inReg(stk, nodes, regions);
+		if (regions.size() != 0)
+			stk.elems[stk.elems.size() - 1]->parameters = inReg(stk, nodes, regions);
 	}
 	felems.close();
 }

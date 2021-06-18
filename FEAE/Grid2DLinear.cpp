@@ -8,6 +8,7 @@
 
 
 void fill_local_matrixM1d(double mt[4], double hr, double rp) {
+
 	mt[0] = 0.333333333333333 * hr * rp;
 	mt[1] = mt[2] = 0.166666666666667 * hr * rp;
 	mt[3] = 0.333333333333333 * hr * rp;
@@ -99,57 +100,51 @@ void Grid2DLinear::buildMatrix()
 
 		fill_localmatrixG(A, llh[0], llh[1], nodes[th->nodes[0]]->coords[0], lambda);
 		fill_localmatrixM(M, llh[0], llh[1], nodes[th->nodes[0]]->coords[0]);
+		construct_matrix(A, M, th);
+		//for (int j = 0; j < n; j++) {
+		//	for (int k = 0; k < n; k++)
+		//		b[j] += M[j * n + k] * F[th->nodes[k]];
+		//}
 
-		for (int j = 0; j < n; j++) {
-			for (int k = 0; k < n; k++)
-				b[j] += M[j * n + k] * F[th->nodes[k]];
-		}
 
+		//for (int j = 0; j < n; j++)
+		//{
 
-		for (int j = 0; j < n; j++)
-		{
+		//	for (int k = 0; k < n; k++)
+		//	{
+		//		printf("%.16lf, ", A[j * n + k]);
+		//	}
+		//	printf(";\n");
+		//}
 
-			for (int k = 0; k < n; k++)
-			{
-				printf("%lf, ", A[j * n + k]);
-			}
-			printf(";\n");
-		}
-
-		//printf("\n");
-		/*	for (int k = 0; k < 4; k++)
-			{
-				printf("%lf, ", F(nodes[th->nodes[k]]->r, nodes[th->nodes[k]]->z));
-			}*/
-			//	printf("\n");
-		for (int j = 0; j < n; ++j)
-		{
-			bf[th->nodes[j]] += b[j];
-			for (int jj = 0; jj < n; ++jj)
-			{
-				if (elems[i]->nodes[jj] >= th->nodes[j])
-					continue;
-				int indx = j * n + jj;
-				int s = ig[elems[i]->nodes[j]];
-				int e = ig[elems[i]->nodes[j] + 1];
-				for (; s < e && jg[s] != elems[i]->nodes[jj]; ++s)
-					;
-				if (s != e)
-				{
-					al[s] += A[indx];
-					au[s] += A[indx];
-				}
-				//AG[elems[i]->nodes[j] * nodes.size() + elems[i]->nodes[jj]] += A[indx];
-			}
-			diag[elems[i]->nodes[j]] += A[j * n + j];
-		}
+		////printf("\n");
+		///*	for (int k = 0; k < 4; k++)
+		//	{
+		//		printf("%lf, ", F(nodes[th->nodes[k]]->r, nodes[th->nodes[k]]->z));
+		//	}*/
+		//	//	printf("\n");
+		//for (int j = 0; j < n; ++j)
+		//{
+		//	bf[th->nodes[j]] += b[j];
+		//	for (int jj = 0; jj < n; ++jj)
+		//	{
+		//		if (elems[i]->nodes[jj] >= th->nodes[j])
+		//			continue;
+		//		int indx = j * n + jj;
+		//		int s = ig[elems[i]->nodes[j]];
+		//		int e = ig[elems[i]->nodes[j] + 1];
+		//		for (; s < e && jg[s] != elems[i]->nodes[jj]; ++s)
+		//			;
+		//		if (s != e)
+		//		{
+		//			al[s] += A[indx];
+		//			au[s] += A[indx];
+		//		}
+		//		//AG[elems[i]->nodes[j] * nodes.size() + elems[i]->nodes[jj]] += A[indx];
+		//	}
+		//	diag[elems[i]->nodes[j]] += A[j * n + j];
+		//}
 	}
-	//for (int i = 0; i < nodes.size(); ++i)
-	//{
-	//	for (int j = 0; j < nodes.size(); ++j)
-	//		printf("%.14lf,", AG[i * nodes.size() + j]);
-	//	printf(";");
-	//}
 	return;
 }
 
@@ -174,6 +169,54 @@ void Grid2DLinear::secondBoundary()
 		{
 			int node_index = el->nodes[j];
 			bf[node_index] += M[j * 2] * el->parameters[0] + M[j * 2 + 1] * el->parameters[1];
+		}
+	}
+}
+
+void Grid2DLinear::thirdBoundary()
+{
+	int n = 2;
+	double M[4];
+	double h, rp;
+	// Итерации по третьим краевым
+	for (int i = 0; i < thirdB.size(); i++)
+	{
+		Element* el = thirdB[i];
+
+		h = -nodes[el->nodes[0]]->coords[0] + nodes[el->nodes[el->nodes.size() - 1]]->coords[0];
+		rp = nodes[el->nodes[0]]->coords[0];
+		if (h == 0)
+		{
+			h = -nodes[el->nodes[0]]->coords[1] + nodes[el->nodes[el->nodes.size() - 1]]->coords[1];
+		}
+
+		fill_local_matrixM1d(M, h, rp * el->parameters[0]);
+		// Заполняем правую часть
+		for (int j = 0; j < el->nodes.size(); j++)
+		{
+			int node_index = el->nodes[j];
+			bf[node_index] += M[j * n] * el->parameters[1] + M[j * n + 1] * el->parameters[2];
+		}
+
+		// Внесение изменение в матрицу
+		for (int j = 0; j < n; ++j)
+		{
+			for (int jj = 0; jj < n; ++jj)
+			{
+				if (el->nodes[jj] >= el->nodes[j])
+					continue;
+				int indx = j * n + jj;
+				int s = ig[el->nodes[j]];
+				int e = ig[el->nodes[j] + 1];
+				for (; s < e && jg[s] != el->nodes[jj]; ++s)
+					;
+				if (s != e)
+				{
+					al[s] += M[indx];
+					au[s] += M[indx];
+				}
+			}
+			diag[el->nodes[j]] += M[j * n + j];
 		}
 	}
 };

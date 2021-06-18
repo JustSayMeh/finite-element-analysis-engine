@@ -9,9 +9,8 @@ struct Region
    vector<double> params;
 };
 
-void read_nodes(Grid& stk);
-void read_elems(Grid& stk);
-void read_elems(Grid& stk, vector<Region> regions);
+void read_nodes(Grid& stk, vector<Region> regions = {});
+void read_elems(Grid& stk, vector<Region> regions = {});
 void read_F(Grid& stk);
 void read_first_B(Grid& stk);
 void read_second_B(Grid& stk);

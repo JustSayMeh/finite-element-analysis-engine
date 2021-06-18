@@ -12,34 +12,35 @@
 
 using namespace std;
 // Папка с тестом
-string root = "..\\2DTestRegions0.1Quad3K\\";
+string root = "..\\2DTest2K0.1Linear\\";
 
 // Искомая функция
 // Для проверки результатов расчетов
 double F(Node *n)
 {
 	//return n->coords[0] * n->coords[1];
-	double lambdaa = 800;
+	double lambdaa = 1e-7;
 
+	//if (n->coords[0] > 5)
+	//	lambdaa = 700;
+	//if (n->coords[0] > 4.3875)
+	//	lambdaa = 900;
+	//if (n->coords[0] > 3.775)
+	//	lambdaa = 600;
+	//if (n->coords[0] > 3.1625)
+	//	lambdaa = 900;
+	//if (n->coords[0] > 2.55)
+	//	lambdaa = 700;
+	//if (n->coords[0] > 1.9375)
+	//	lambdaa = 800;
+	//if (n->coords[0] > 1.325)
+	//	lambdaa = 100;
+	//if (n->coords[0] > 0.7125)
+	//	lambdaa = 700;
 	if (n->coords[0] > 5)
-		lambdaa = 700;
-	if (n->coords[0] > 4.3875)
-		lambdaa = 900;
-	if (n->coords[0] > 3.775)
-		lambdaa = 600;
-	if (n->coords[0] > 3.1625)
-		lambdaa = 900;
-	if (n->coords[0] > 2.55)
-		lambdaa = 700;
-	if (n->coords[0] > 1.9375)
-		lambdaa = 800;
-	if (n->coords[0] > 1.325)
-		lambdaa = 100;
-	if (n->coords[0] > 0.7125)
-		lambdaa = 700;
-
-
-	return -10 / lambdaa * log(n->coords[0]) + 10 * log(100);
+		lambdaa = 7 * (1e-8);
+	//return -10 * log(n->coords[0]) + 10 * log(100);
+	return -10 * log(n->coords[0]) / lambdaa + 2 * (1e2);
 	//return -10*log(n->coords[0]) + 10 * log(100) + log(n->coords[1]);
 	//return 2 * log(n->coords[0]) + log(n->coords[1]);
 }
@@ -84,10 +85,10 @@ void main()
 	string path;
 	// получить сетку по названию папки теста
 	Grid *stk = factory(root);
-	read_nodes(*stk);
+	read_nodes(*stk, read_regions(*stk));
 	//drob_grid(*stk);
 	print_solution(*stk);
-	read_elems(*stk, read_regions(*stk));
+	read_elems(*stk);
 
 	read_F(*stk);
 	read_first_B(*stk);
@@ -103,7 +104,8 @@ void main()
 	stk->secondBoundary();
 	stk->firstBoundary();
 	//print_full_matrix(stk);
-	double *x = stk->LOS(1e-15, 2e-14);
+	//double *x = stk->LOS(1e-12, 1e-11);
+	double *x = stk->MSG();
 	//stk.toLUsq();
 	//	6.659262206176e-01
 	// 1.719911641308e-01

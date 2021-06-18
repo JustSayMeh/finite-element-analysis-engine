@@ -433,7 +433,7 @@ void Grid::construct_matrix(double* A, double *M, Element *th)
 
 		for (int k = 0; k < n; k++)
 		{
-			printf("%lf, ", A[j * n + k]);
+			printf("%.16lf, ", A[j * n + k]);
 		}
 		printf(";\n");
 	}

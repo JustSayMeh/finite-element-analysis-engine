@@ -3,7 +3,8 @@ x = []
 y = []
 
 def F(r, z):
-    lambdaa = 800
+    lambdaa = 1e-12
+    '''
     if r > 5:
 	    lambdaa = 700
     elif r > 4.3875:
@@ -20,13 +21,18 @@ def F(r, z):
 	    lambdaa = 100
     elif r > 0.7125:
 	    lambdaa = 700
+    '''
+
+    if r > 2.5:
+	    lambdaa = 5e-14
+    if r > 5:
+        lambdaa = 7e-13
 
 
+    #print("{} {}\n".format(r, lambdaa))
+    #return - 0.000003684 / lambdaa * math.log(r) + 20265000
+    return -10*math.log(r) + 10 * math.log(100)
 
-
-
-    print("{} {}\n".format(r, lambdaa))
-    return -10 / lambdaa * math.log(r) + 10 * math.log(100)
 
 with open('axisX.txt', 'r') as f :
     for line in f.readlines():

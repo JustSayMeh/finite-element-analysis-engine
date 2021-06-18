@@ -100,7 +100,7 @@ void fill_localmatrixG(double ms[81], double hr, double hz, double rk, double la
 	ms[80] = (0.5 * (-0.933333333333333 * hr * hr - 1.06666666666667 * hr * rk) / hz + 1.0 * (0.116666666666667 * hr * hr + 0.133333333333333 * hr * rk) / hz + 0.333333333333333 * (1.86666666666667 * hr * hr + 2.13333333333333 * hr * rk) / hz + 0.25 * (-7.33333333333333 * hr * hz - 9.33333333333333 * hz * rk) / hr + 0.333333333333333 * (1.83333333333333 * hr * hz + 2.33333333333333 * hz * rk) / hr + 0.2 * (7.33333333333333 * hr * hz + 9.33333333333333 * hz * rk) / hr) * lambda;
 }
 
-void fill_localmatrixM1D(double ms[9], double hr, double rp)
+static void fill_localmatrixM1D(double ms[9], double hr, double rp)
 {
 	ms[0] = (0.133333333333333 * hr) * rp;
 	ms[3] = ms[1] = (0.0666666666666673 * hr)* rp;
